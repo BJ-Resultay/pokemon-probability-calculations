@@ -7,4 +7,4 @@
 
 ## Goal
 Update program to account for moves with special effects
-Expand information in TODO.md
+(Expand information in TODO.md).
