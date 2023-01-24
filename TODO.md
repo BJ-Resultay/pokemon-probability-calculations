@@ -32,7 +32,7 @@ The success distribution can be calculated similarly to how critical hits are ca
 
 ### Thunder Wave, Glare, and Stun Spore
 Renders the opponent paralyzed.
-This reduces the current speed of the oppo- nent to 75% and similarly multiplies all accuracy values by 75% for opponent’s subsequent turns.
+This reduces the current speed of the opponent to 75% and similarly multiplies all accuracy values by 75% for opponent’s subsequent turns.
 These moves also have to pass an accuracy check.
 There are three possible strategies: do not use, use once, and use until successful.
 Because the opponent’s speed is affected, these moves interact with the trapping move strategy.
