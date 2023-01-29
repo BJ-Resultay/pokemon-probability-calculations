@@ -151,7 +151,7 @@ def dataInitialization():
    counter = 0
    print("Forming matchups...")
    for b in range(0, len(botData)):
-      if botData[b] == "\n" or botData[b][0] == "Possible": continue
+      if botData[b] == "\n" or botData[b][0] == "Possible" or botData[b][0] == "#": continue
       botData[b] = botData[b].split()
       if(botData[b][0] in pokeList):
          counter += 1
