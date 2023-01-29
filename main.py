@@ -452,9 +452,10 @@ if __name__ == '__main__':
          resultsMatrix[x][y] = r
          
    filename = FILE_PATH + "results.csv"
+   header = ([vars(pokemon)["name"] for pokemon in POKEMON_LIST])
    with open(filename, 'w') as csvfile:
       csvwriter = csv.writer(csvfile)
-      # writing the data rows
+      csvwriter.writerow(header)
       csvwriter.writerows(resultsMatrix)
 
    print("Done!")
