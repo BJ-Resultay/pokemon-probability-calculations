@@ -83,9 +83,12 @@ def placeIntoMatchup(textline1, textline2, pokeList):
 
 #Reading in the data from the text files.
 def dataInitialization():
-   pokeTextPath = "alphabeticalPokemon.txt"
-   moveTextPath = "moves.txt"
-   botDataPath = "bot-data.txt"
+#   pokemon = "alphabetical-pokemon.txt"
+#   moveTextPath = "moves.txt"
+#   botDataPath = "bot-data.txt"
+   pokeTextPath = "./dummy-data/alphabetical-pokemon-blizzard.txt"
+   moveTextPath = "./dummy-data/moves-blizzard.txt"
+   botDataPath = "./dummy-data/bot-data-blizzard.txt"
    f = open(pokeTextPath)
    g = open(botDataPath)
    h = open(moveTextPath)
@@ -444,8 +447,8 @@ if __name__ == '__main__':
          r = probabilityGivenTwoMoves(MATCHUP_LIST[x][y], m, n)
          print("Result of this matchup:", r, "\n")
          resultsMatrix[x][y] = r
-   filename = "results.csv"
-
+         
+   filename = "./dummy-data/results-blizzard.csv"
    with open(filename, 'w') as csvfile:
       csvwriter = csv.writer(csvfile)
       # writing the data rows
