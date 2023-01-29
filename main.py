@@ -14,6 +14,8 @@ from statistics import mean
 import csv
 np.set_printoptions(threshold=sys.maxsize)
 
+#FILE_PATH = "./"
+FILE_PATH = "./dummy-data/blizzard/"
 MAX_MOVES = 40
 MOVES_LIST = []
 POKEMON_LIST = []
@@ -83,12 +85,9 @@ def placeIntoMatchup(textline1, textline2, pokeList):
 
 #Reading in the data from the text files.
 def dataInitialization():
-#   pokemon = "alphabetical-pokemon.txt"
-#   moveTextPath = "moves.txt"
-#   botDataPath = "bot-data.txt"
-   pokeTextPath = "./dummy-data/alphabetical-pokemon-blizzard.txt"
-   moveTextPath = "./dummy-data/moves-blizzard.txt"
-   botDataPath = "./dummy-data/bot-data-blizzard.txt"
+   pokeTextPath = FILE_PATH + "alphabetical-pokemon.txt"
+   moveTextPath = FILE_PATH + "moves.txt"
+   botDataPath = FILE_PATH + "bot-data.txt"
    f = open(pokeTextPath)
    g = open(botDataPath)
    h = open(moveTextPath)
@@ -448,7 +447,7 @@ if __name__ == '__main__':
          print("Result of this matchup:", r, "\n")
          resultsMatrix[x][y] = r
          
-   filename = "./dummy-data/results-blizzard.csv"
+   filename = FILE_PATH + "results.csv"
    with open(filename, 'w') as csvfile:
       csvwriter = csv.writer(csvfile)
       # writing the data rows
