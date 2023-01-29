@@ -11,7 +11,6 @@ Kabutops 323 258 15.63
 Lapras 463 218 11.71
 Marowak 323 188 8.79
 Mewtwo 415 358 25.39
-Muk 413 198 9.77
 Nidoking 365 268 16.99
 Nidoqueen 383 250 14.84
 Omastar 343 208 10.74

@@ -14,12 +14,13 @@ from statistics import mean
 import csv
 np.set_printoptions(threshold=sys.maxsize)
 
-#FILE_PATH = "./"
+#FILE_PATH = "./"   # main branch
 FILE_PATH = "./dummy-data/blizzard/"
+NUM_POKEMON = sum(1 for line in open(FILE_PATH + "alphabetical-pokemon.txt"))
 MAX_MOVES = 40
 MOVES_LIST = []
 POKEMON_LIST = []
-MATCHUP_LIST = [[None for x in range(81)] for y in range(81)]
+MATCHUP_LIST = [[None for x in range(NUM_POKEMON)] for y in range(NUM_POKEMON)]
 
 def printMatrix():
    for x in range(len(MATCHUP_LIST)):
@@ -86,7 +87,7 @@ def placeIntoMatchup(textline1, textline2, pokeList):
 #Reading in the data from the text files.
 def dataInitialization():
    pokeTextPath = FILE_PATH + "alphabetical-pokemon.txt"
-   moveTextPath = FILE_PATH + "moves.txt"
+   moveTextPath = "moves.txt"
    botDataPath = FILE_PATH + "bot-data.txt"
    f = open(pokeTextPath)
    g = open(botDataPath)
@@ -429,7 +430,7 @@ if __name__ == '__main__':
    print("Reading data from files...")
    dataInitialization()
 
-   resultsMatrix = [[0 for x in range(81)] for y in range(81)]
+   resultsMatrix = [[0 for x in range(NUM_POKEMON)] for y in range(NUM_POKEMON)]
 
    print("Calculating success vectors...")
    counter = 0
@@ -438,6 +439,9 @@ if __name__ == '__main__':
          counter += 1
          print("Matchup", counter, "...")
          print(POKEMON_LIST[x].name, POKEMON_LIST[y].name)
+         
+         if MATCHUP_LIST[x][y] is None:
+            continue
          successVectorDriver(MATCHUP_LIST[x][y])
 
          m = moveSelector(MATCHUP_LIST[x][y], MATCHUP_LIST[x][y].pokemon1, "default")
