@@ -68,7 +68,7 @@ def placeIntoMatchup(textline1, textline2, pokeList):
     # Matchup [1][0] doesn't exist.
     firstP, secondP = indexPokemon(p1, p2, pokeList)
     # Create the matchup if it doesn't exist.
-    if(MATCHUP_LIST[firstP][secondP] == None):
+    if MATCHUP_LIST[firstP][secondP] == None:
         m = c.Matchup(firstP, secondP)
         MATCHUP_LIST[firstP][secondP] = m
 
@@ -159,7 +159,7 @@ def dataInitialization():
     for b in range(0, len(botData)):
         if botData[b] == "\n" or botData[b][0] == "Possible" or botData[b][0] == "#": continue
         botData[b] = botData[b].split()
-        if(botData[b][0] in pokeList):
+        if botData[b][0] in pokeList:
             counter += 1
             botData[b+1] = botData[b+1].split()
             damages = parseDamageAmounts(botData[b + 1])
@@ -180,9 +180,9 @@ def successDistribution(HP, d, i):
     lookups = {}
     total = 0
     output = [0 for x in range(MAX_MOVES+1)]
-    if(d[0] == 0) or (i > MAX_MOVES): return output
+    if d[0] == 0 or i > MAX_MOVES: return output
     while total < 1:
-        if((HP, i) not in lookups):
+        if (HP, i) not in lookups:
             startTime = time.perf_counter()
             r = recursiveProb(HP, d, i, startTime)
             lookups[(HP, i)] = r
@@ -196,8 +196,8 @@ def successDistribution(HP, d, i):
 
 def recursiveProb(HP, d, i, startTime):
     currTime = time.perf_counter()
-    t = currTime - startTime
-    if(t > 10):
+    deltaTime = currTime - startTime
+    if deltaTime > 10:
         return 0
     frac = HP/i
     if frac > max(d):
@@ -236,14 +236,14 @@ def IHCDF(n, x):
 def irwinHall(HP, d, i):
     #print(HP, d, i)
     output = [0 for x in range(MAX_MOVES+1)]
-    if (d[0] == 0) or (i > MAX_MOVES): return output
+    if d[0] == 0 or i > MAX_MOVES: return output
     sum = 0
     while sum < 1 and i <= MAX_MOVES:
         if min(d) * i > HP: p = 1
         else:
             m = mean(d)*i
             v = i*((max(d)-min(d))^2)/12
-            if(v == 0):
+            if v == 0:
                 return output
             sd = (HP - m)/v
             xHP = i/2 + sd*i/12
@@ -256,14 +256,14 @@ def irwinHall(HP, d, i):
     return output
 
 def criticalRecalculation(move, pokemon):
-    if(move.alwaysCritical) or move.bestCase > 9 or move.bestCase == 1:
+    if move.alwaysCritical or move.bestCase > 9 or move.bestCase == 1:
         move.criticalVector = move.successVector
         return move.successVector
     move.criticalVector = [0 for x in range(MAX_MOVES)]
     cv = [0 for x in range(MAX_MOVES)]
     critChance = pokemon.critRate/100
     for x in range(len(move.successVector)):
-        if(move.successVector[x] > 0):
+        if move.successVector[x] > 0:
             cv = [0 for x in range(MAX_MOVES)]
             critDict = c.getCritDictionary(x)
             cv = c.getCriticalVector(critDict, critChance, move, cv)
@@ -277,7 +277,7 @@ def moveSelector(matchup, pokemon, option):
     # I guess this is where we can put changes regarding the 21 nonstandard move cases.
     # For now, it's just returning the highest expected value move.
     if option == "default":
-        if(matchup.pokemon1 == pokemon):
+        if matchup.pokemon1 == pokemon:
             set = matchup.pokemon1moves
             sortedMoves = sorted(set, key=lambda Move: Move.bestCase)
             bestMove = sortedMoves[0]
@@ -304,7 +304,7 @@ def successVectorDriver(matchup):
     bestMove = p1MovesSorted[0]
     counter = 0
     for m in (p1MovesSorted):
-        if(m.bestCase > (2.22 * bestMove.bestCase)):
+        if m.bestCase > (2.22 * bestMove.bestCase):
             m.successVector = [0 for x in range(0, 39)]
             break
         enemyHP = POKEMON_LIST[matchup.pokemon2].HP
@@ -320,13 +320,13 @@ def successVectorDriver(matchup):
 
         # Here we write the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
-        if(counter < 3):
+        if counter < 3:
             condition1 = bool(len(m.drawbacks) > 0)
-            if(counter < len(p1MovesSorted)):
+            if counter < len(p1MovesSorted):
                 condition2 = bool(counter < len(p1MovesSorted) and p1MovesSorted[counter + 1].bestCase <=
                            m.bestCase)
             else: condition2 = False
-            if(p1MovesSorted[counter + 1].accuracy > m.accuracy):
+            if p1MovesSorted[counter + 1].accuracy > m.accuracy:
                 if (p1MovesSorted[counter + 1].accuracy - m.accuracy) <= 10:
                     condition3 = bool(abs(p1MovesSorted[counter + 1].bestCase - m.bestCase) <= 1)
                 else:
@@ -344,7 +344,7 @@ def successVectorDriver(matchup):
     bestMove = p2MovesSorted[0]
     for m in p2MovesSorted:
         #print(counter, p2MovesSorted[counter].name)
-        if (m.bestCase > (2.22 * bestMove.bestCase)):
+        if m.bestCase > (2.22 * bestMove.bestCase):
             m.successVector = [0 for x in range(0, 39)]
             break
         enemyHP = POKEMON_LIST[matchup.pokemon1].HP
@@ -360,13 +360,13 @@ def successVectorDriver(matchup):
 
         # Here we're writing the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
-        if (counter < 3):
+        if counter < 3:
             condition1 = bool(len(m.drawbacks) > 0)
-            if(counter < len(p2MovesSorted)):
+            if counter < len(p2MovesSorted):
                 condition2 = bool(counter < len(p2MovesSorted) and p2MovesSorted[counter + 1].bestCase <=
                             m.bestCase)
             else: condition2 = False
-            if (p2MovesSorted[counter + 1].accuracy > m.accuracy):
+            if p2MovesSorted[counter + 1].accuracy > m.accuracy:
                 if (p2MovesSorted[counter + 1].accuracy - m.accuracy) <= 10:
                     condition3 = bool(abs(p2MovesSorted[counter + 1].bestCase - m.bestCase) <= 1)
                 else:
@@ -385,9 +385,9 @@ def successVectorDriver(matchup):
 def probabilityGivenTwoMoves(matchup, p1move, p2move):
     p1speed = POKEMON_LIST[matchup.pokemon1].speed
     p2speed = POKEMON_LIST[matchup.pokemon2].speed
-    if(p1speed >= p2speed):
+    if p1speed >= p2speed:
         result = probFormula(p1move, p2move)
-    elif(p2speed > p1speed):
+    elif p2speed > p1speed:
         result = 1 - probFormula(p2move, p1move)
     matchup.winProbability = result
     return result
@@ -404,10 +404,10 @@ def probFormula(fasterMove, slowerMove):
     counter = 0
     n = MAX_MOVES
     for x in range(len(successVector1)):
-        if (successVector1[x] > 0 and x < MAX_MOVES):
+        if successVector1[x] > 0 and x < MAX_MOVES:
             #print("x=", x)
             for y in range(len(successVector2)):
-                if (successVector2[y] > 0 and y < MAX_MOVES):
+                if successVector2[y] > 0 and y < MAX_MOVES:
                     counter += 1
                     #print("y=", y)
                     a = fasterMove.accuracy / 100 * successVector1[x]
@@ -422,7 +422,7 @@ def probFormula(fasterMove, slowerMove):
                             innerSum += (comb(t, i) * math.pow(b, i) * math.pow(1 - b, t - i))
                         outerSum += factor1 * innerSum
                     result += outerSum
-    if(counter > 0):
+    if counter > 0:
         result = result/counter
     else:
         result = 0.0
