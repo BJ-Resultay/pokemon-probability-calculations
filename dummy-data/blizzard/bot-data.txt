@@ -1,4 +1,11 @@
-# test
+# Class:    CS395
+# Author:   BJ Resultay
+# Date:     29 Jan 2023
+# File:     dummy-data/blizzard/bot-data.txt
+#           subset of bot-data.txt
+# Key:      Blizzard
+# TODO:     Create program to automatically find pokemon that know {Key} move
+
 Aerodactyl DoubleEdge vs. Articuno: 75-89 (19.5 - 23.2%) -- possible 5HKO
 Possible damage amounts: (75, 76, 76, 76, 77, 77, 77, 78, 78, 78, 79, 79, 79, 80, 80, 80, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 84, 85, 85, 85, 86, 86, 86, 87, 87, 87, 88, 88, 89)
 

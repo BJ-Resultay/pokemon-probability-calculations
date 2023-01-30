@@ -16,7 +16,8 @@ np.set_printoptions(threshold=sys.maxsize)
 
 #FILE_PATH = "./"   # main branch
 FILE_PATH = "./dummy-data/blizzard/"
-NUM_POKEMON = sum(1 for line in open(FILE_PATH + "alphabetical-pokemon.txt"))
+NUM_POKEMON = sum((0 if line[0] == "\n" or line[0] == "#" else 1)
+                  for line in open(FILE_PATH + "alphabetical-pokemon.txt", "r").readlines())
 MAX_MOVES = 40
 MOVES_LIST = []
 POKEMON_LIST = []
@@ -100,6 +101,7 @@ def dataInitialization():
    #Create the array of Pokemon, including name, HP, speed, and crit chance.
    statsList = f.readlines()
    for p in range(0, len(statsList)):
+      if statsList[p][0] == "\n" or statsList[p][0] == "#": continue
       statsList[p] = statsList[p].split()
       name = statsList[p][0]
       hp = int(statsList[p][1])

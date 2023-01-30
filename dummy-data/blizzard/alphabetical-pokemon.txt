@@ -1,3 +1,11 @@
+# Class:    CS395
+# Author:   BJ Resultay
+# Date:     29 Jan 2023
+# File:     dummy-data/blizzard/alphabetical-pokemon.txt
+#           subset of alphabetical-pokemon.txt
+# Key:      Blizzard
+# TODO:     Create program to add pokemon that know {Key} move + Aerodactyl (control variable)
+
 Aerodactyl 363 358 25.39
 Articuno 383 268 16.99
 Blastoise 361 254 15.23
