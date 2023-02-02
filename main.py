@@ -435,7 +435,7 @@ if __name__ == '__main__':
     print("Reading data from files...")
     dataInitialization()
 
-    resultsMatrix = [[0 for x in range(NUM_POKEMON)] for y in range(NUM_POKEMON)]
+    resultsMatrix = [[None for x in range(NUM_POKEMON)] for y in range(NUM_POKEMON)]
 
     print("Calculating success vectors...")
     counter = 0
