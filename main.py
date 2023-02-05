@@ -285,8 +285,9 @@ def moveSelector(matchup, pokemon, option):
             sortedMoves = sorted(moves, key=lambda Move: Move.bestCase)
 #            bestMove = sortedMoves[0]
 
-        # if blizzard success vector is changed here
+        # if blizzard success vector is changed
         # blizzard's crit vector would also need to reflect status affects
+        # since success vector chooses move, but crit vector affects results
         # done under successVectorDriver to only initialize once
         max = 0
         for move in moves:
@@ -366,8 +367,12 @@ def successVectorDriver(matchup):
         
         # status effects are additive vector
         # need to copy for poke1
+        # if blizzard successVector is not int, no change for some reason
+        # pre-freezeRecalc successVector and criticalVector is same, bug?
         if "Freeze" in m.statusAffliction:
             freezeRecalculation(m, POKEMON_LIST[matchup.pokemon2])
+            print("Success vector", m.name, m.successVector)
+            print("Critical vector", m.name, m.criticalVector)
 
         # Here we're writing the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
@@ -392,13 +397,11 @@ def successVectorDriver(matchup):
     return
 
 def freezeRecalculation(move, pokemon):
-    pass
-"""
     if move.bestCase > 9 or move.bestCase == 1:
-        move.criticalVector = move.successVector
+#        move.criticalVector = move.successVector
         return move.successVector
-    move.criticalVector = [0 for x in range(MAX_MOVES)]
-    critChance = pokemon.critRate/100
+    tmpVector = [0 for x in range(MAX_MOVES)]
+    critChance = move.statusAffliction["Freeze"]/100
     for x in range(len(move.successVector)):
         if move.successVector[x] > 0:
             cv = [0 for x in range(MAX_MOVES)]
@@ -406,10 +409,11 @@ def freezeRecalculation(move, pokemon):
             cv = c.getCriticalVector(critDict, critChance, move, cv)
             for y in range(len(cv)):
                 cv[y] = cv[y] * move.successVector[x]
-            for y in range(len(move.criticalVector)):
-                move.criticalVector[y] += cv[y]
-    return move.criticalVector
-"""
+            for y in range(len(tmpVector)):
+                tmpVector[y] += cv[y]
+    move.successVector = tmpVector
+    move.criticalVector = [(sum(x) / 2) for x in zip(move.criticalVector, move.successVector)]
+    return move.successVector
 
 # This is the function that calls Dr. Goldsmith's formula.
 # As of right now I haven't tested it fully...
