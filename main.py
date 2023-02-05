@@ -265,7 +265,7 @@ def criticalRecalculation(move, pokemon):
     for x in range(len(move.successVector)):
         if move.successVector[x] > 0:
             cv = [0 for x in range(MAX_MOVES)]
-            critDict = c.getCritDictionary(x)
+            critDict = c.getCritDictionary(x)   # where is c defined?
             cv = c.getCriticalVector(critDict, critChance, move, cv)
             for y in range(len(cv)):
                 cv[y] = cv[y] * move.successVector[x]
@@ -316,7 +316,7 @@ def successVectorDriver(matchup):
             v = irwinHall(enemyHP, moveDamage, bestCase)
         m.successVector = v
         criticalRecalculation(m, POKEMON_LIST[matchup.pokemon1])
-        #print("Success vector", m.successVector)
+#        print("Success vector", m.name, m.successVector)
 
         # Here we write the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
@@ -355,8 +355,9 @@ def successVectorDriver(matchup):
         else:
             v = irwinHall(enemyHP, moveDamage, bestCase)
         m.successVector = v
-        criticalRecalculation(m, POKEMON_LIST[matchup.pokemon1])
-        #print("Success vector", m.successVector)
+        criticalRecalculation(m, POKEMON_LIST[matchup.pokemon2])    # typo?
+        print("Success vector", m.name, m.successVector)    # find edge move
+        print("Critical vector", m.name, m.criticalVector)
 
         # Here we're writing the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
