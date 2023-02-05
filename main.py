@@ -98,10 +98,10 @@ def dataInitialization():
     h = open(moveTextPath)
     pokeList = []
     speedList = []
-    HPList = []
+    hpList = []
     critRateList = []
 
-    #Create the array of Pokemon, including name, HP, speed, and crit chance.
+    #Create the array of Pokemon, including name, hp, speed, and crit chance.
     statsList = f.readlines()
     for p in range(0, len(statsList)):
         if statsList[p][0] == "\n" or statsList[p][0] == "#": continue
@@ -114,7 +114,7 @@ def dataInitialization():
 
         POKEMON_LIST.append(pokemonToAppend)
         pokeList.append(statsList[p][0])
-        HPList.append(int(statsList[p][1]))
+        hpList.append(int(statsList[p][1]))
         speedList.append(int(statsList[p][2]))
         critRateList.append(float(statsList[p][3]))
 
@@ -173,33 +173,32 @@ def dataInitialization():
 
 
 #Finds the success distribution of a single move
-#Input: enemy HP, damage value vector, and best-case (given from file)
+#Input: enemy hp, damage value vector, and best-case (given from file)
 #Output: A vector of the success distribution for each move.
-def successDistribution(HP, d, i):
-    #print(HP, d, i)
+def successDistribution(hp, damage, bestCase):
     lookups = {}
     total = 0
     output = [0 for x in range(MAX_MOVES+1)]
-    if d[0] == 0 or i > MAX_MOVES: return output
+    if damage[0] == 0 or bestCase > MAX_MOVES: return output   # might fail trapping moves
     while total < 1:
-        if (HP, i) not in lookups:
+        if (hp, bestCase) not in lookups:
             startTime = time.perf_counter()
-            r = recursiveProb(HP, d, i, startTime)
-            lookups[(HP, i)] = r
-        else: r = lookups[(HP, i)]
-        output[i] = r - total #We start with the lowest turn count.
+            r = recursiveProb(hp, damage, bestCase, startTime)
+            lookups[(hp, bestCase)] = r
+        else: r = lookups[(hp, bestCase)]
+        output[bestCase] = r - total #We start with the lowest turn count.
         total = r
-        i += 1
+        bestCase += 1
     del lookups
 
     return output
 
-def recursiveProb(HP, d, i, startTime):
+def recursiveProb(hp, d, i, startTime):
     currTime = time.perf_counter()
     deltaTime = currTime - startTime
     if deltaTime > 10:
         return 0
-    frac = HP/i
+    frac = hp/i
     if frac > max(d):
         return 0
     elif frac < min(d):
@@ -207,12 +206,12 @@ def recursiveProb(HP, d, i, startTime):
     elif i == 1:
         s = 0
         for n in d:
-            if n > HP: s += 1
+            if n > hp: s += 1
         return s/39
     else:
         sum = 0
         for j in d:
-            sum += recursiveProb(HP-j, d, i-1, startTime)/39
+            sum += recursiveProb(hp-j, d, i-1, startTime)/39
         return sum
 
 #PDF Irwin Hall distribution
@@ -233,19 +232,19 @@ def IHCDF(n, x):
     result = result * 1/(math.factorial(n))
     return result
 
-def irwinHall(HP, d, i):
-    #print(HP, d, i)
+def irwinHall(hp, d, i):
+    #print(hp, d, i)
     output = [0 for x in range(MAX_MOVES+1)]
     if d[0] == 0 or i > MAX_MOVES: return output
     sum = 0
     while sum < 1 and i <= MAX_MOVES:
-        if min(d) * i > HP: p = 1
+        if min(d) * i > hp: p = 1
         else:
             m = mean(d)*i
             v = i*((max(d)-min(d))^2)/12
             if v == 0:
                 return output
-            sd = (HP - m)/v
+            sd = (hp - m)/v
             xHP = i/2 + sd*i/12
             #this either needs to be the pdf or 1-cdf
             #p = IHPDF(i, xHP)
@@ -260,12 +259,12 @@ def criticalRecalculation(move, pokemon):
         move.criticalVector = move.successVector
         return move.successVector
     move.criticalVector = [0 for x in range(MAX_MOVES)]
-    cv = [0 for x in range(MAX_MOVES)]
+#    cv = [0 for x in range(MAX_MOVES)]  # not needed
     critChance = pokemon.critRate/100
     for x in range(len(move.successVector)):
         if move.successVector[x] > 0:
             cv = [0 for x in range(MAX_MOVES)]
-            critDict = c.getCritDictionary(x)   # where is c defined?
+            critDict = c.getCritDictionary(x)
             cv = c.getCriticalVector(critDict, critChance, move, cv)
             for y in range(len(cv)):
                 cv[y] = cv[y] * move.successVector[x]
@@ -278,21 +277,27 @@ def moveSelector(matchup, pokemon, option):
     # For now, it's just returning the highest expected value move.
     if option == "default":
         if matchup.pokemon1 == pokemon:
-            set = matchup.pokemon1moves
-            sortedMoves = sorted(set, key=lambda Move: Move.bestCase)
-            bestMove = sortedMoves[0]
+            moves = matchup.pokemon1moves
+            sortedMoves = sorted(moves, key=lambda Move: Move.bestCase)
+#            bestMove = sortedMoves[0]
         else:
-            set = matchup.pokemon2moves
-            sortedMoves = sorted(set, key=lambda Move: Move.bestCase)
-            bestMove = sortedMoves[0]
+            moves = matchup.pokemon2moves
+            sortedMoves = sorted(moves, key=lambda Move: Move.bestCase)
+#            bestMove = sortedMoves[0]
+
+        # if blizzard success vector is changed here
+        # blizzard's crit vector would also need to reflect status affects
+        # done under successVectorDriver to only initialize once
         max = 0
-        for m in set:
+        for move in moves:
             sum = 0
-            for x in range(1, len(m.successVector)):
-                sum += m.successVector[x]/x
-            sum = sum * m.accuracy/100
+            for x in range(1, len(move.successVector)):
+                sum += move.successVector[x]/x
+            sum = sum * move.accuracy/100
             if sum > max:
-                bestMove = m
+                # this always overrides bestMove = sortedMoves[0] the first time
+                # unless sum is always 0
+                bestMove = move
     return bestMove
 
 # This drives the calls to SuccessDistribution. I
@@ -307,7 +312,7 @@ def successVectorDriver(matchup):
         if m.bestCase > (2.22 * bestMove.bestCase):
             m.successVector = [0 for x in range(0, 39)]
             break
-        enemyHP = POKEMON_LIST[matchup.pokemon2].HP
+        enemyHP = POKEMON_LIST[matchup.pokemon2].hp
         moveDamage = matchup.pokemon1moves[m]
         bestCase = m.bestCase
         if bestCase <= 5:
@@ -347,7 +352,7 @@ def successVectorDriver(matchup):
         if m.bestCase > (2.22 * bestMove.bestCase):
             m.successVector = [0 for x in range(0, 39)]
             break
-        enemyHP = POKEMON_LIST[matchup.pokemon1].HP
+        enemyHP = POKEMON_LIST[matchup.pokemon1].hp
         moveDamage = matchup.pokemon2moves[m]
         bestCase = m.bestCase
         if bestCase <= 5:
@@ -358,6 +363,11 @@ def successVectorDriver(matchup):
         criticalRecalculation(m, POKEMON_LIST[matchup.pokemon2])    # typo?
         print("Success vector", m.name, m.successVector)    # find edge move
         print("Critical vector", m.name, m.criticalVector)
+        
+        # status effects are additive vector
+        # need to copy for poke1
+        if "Freeze" in m.statusAffliction:
+            freezeRecalculation(m, POKEMON_LIST[matchup.pokemon2])
 
         # Here we're writing the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
@@ -380,6 +390,26 @@ def successVectorDriver(matchup):
             break
         counter += 1
     return
+
+def freezeRecalculation(move, pokemon):
+    pass
+"""
+    if move.bestCase > 9 or move.bestCase == 1:
+        move.criticalVector = move.successVector
+        return move.successVector
+    move.criticalVector = [0 for x in range(MAX_MOVES)]
+    critChance = pokemon.critRate/100
+    for x in range(len(move.successVector)):
+        if move.successVector[x] > 0:
+            cv = [0 for x in range(MAX_MOVES)]
+            critDict = c.getCritDictionary(x)
+            cv = c.getCriticalVector(critDict, critChance, move, cv)
+            for y in range(len(cv)):
+                cv[y] = cv[y] * move.successVector[x]
+            for y in range(len(move.criticalVector)):
+                move.criticalVector[y] += cv[y]
+    return move.criticalVector
+"""
 
 # This is the function that calls Dr. Goldsmith's formula.
 # As of right now I haven't tested it fully...

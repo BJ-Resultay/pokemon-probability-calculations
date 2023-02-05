@@ -9,10 +9,10 @@ class Matchup:
 
 
 class Pokemon:
-    def __init__(self, name, HP, speed, critRate):
+    def __init__(self, name, hp, speed, critRate):
         self.moves = []
         self.name = name
-        self.HP = HP
+        self.hp = hp
         self.speed = speed
         self.critRate = critRate
 
