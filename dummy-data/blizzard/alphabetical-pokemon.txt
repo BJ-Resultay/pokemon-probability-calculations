@@ -12,6 +12,7 @@ Blastoise 361 254 15.23
 Clefable 393 218 11.71
 Cloyster 303 238 13.67
 Dewgong 383 238 13.67
+Dragonite 385 258 15.63
 Golduck 363 268 16.99
 Gyarados 393 348 15.82
 Jynx 333 288 18.55
