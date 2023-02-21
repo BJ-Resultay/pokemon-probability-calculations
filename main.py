@@ -2,6 +2,7 @@
 # evolved Generation 1 Pokemon.
 
 # Last edited Sep 2021
+# Last edited Feb 2023 by BJ Resultay
 
 import numpy as np
 import sys
@@ -324,6 +325,9 @@ def successVectorDriver(matchup):
         criticalRecalculation(m, POKEMON_LIST[matchup.pokemon1])
 #        print("Success vector", m.name, m.successVector)
 
+        if "Freeze" in m.statusAffliction:
+            freezeRecalculation(m, POKEMON_LIST[matchup.pokemon1])
+
         # Here we write the conditions for continuation. If one of these conditions are met,
         # we have a possible better move to examine. If not, we break and move on.
         if counter < 3:
@@ -366,7 +370,6 @@ def successVectorDriver(matchup):
         print("Critical vector", m.name, m.criticalVector)
         
         # status effects are additive vector
-        # need to copy for poke1
         # if blizzard successVector is not int, no change for some reason
         # pre-freezeRecalc successVector and criticalVector is same, bug?
         if "Freeze" in m.statusAffliction:
@@ -396,6 +399,8 @@ def successVectorDriver(matchup):
         counter += 1
     return
 
+# freeze rate is copy of crit rate
+# but crit rate function is bugged
 def freezeRecalculation(move, pokemon):
     if move.bestCase > 9 or move.bestCase == 1:
 #        move.criticalVector = move.successVector
@@ -411,6 +416,9 @@ def freezeRecalculation(move, pokemon):
                 cv[y] = cv[y] * move.successVector[x]
             for y in range(len(tmpVector)):
                 tmpVector[y] += cv[y]
+                
+    # bug where non int vector doesn't actually change
+    # average probably isn't correct for critical vector
     move.successVector = tmpVector
     move.criticalVector = [(sum(x) / 2) for x in zip(move.criticalVector, move.successVector)]
     return move.successVector
