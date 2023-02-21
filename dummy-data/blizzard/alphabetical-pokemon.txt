@@ -1,0 +1,32 @@
+# Class:    CS395
+# Author:   BJ Resultay
+# Date:     29 Jan 2023
+# File:     dummy-data/blizzard/alphabetical-pokemon.txt
+#           subset of alphabetical-pokemon.txt
+# Key:      Blizzard
+# TODO:     Create program to add pokemon that know {Key} move + Aerodactyl (control variable)
+
+Aerodactyl 363 358 25.39
+Articuno 383 268 16.99
+Blastoise 361 254 15.23
+Clefable 393 218 11.71
+Cloyster 303 238 13.67
+Dewgong 383 238 13.67
+Dragonite 385 258 15.63
+Golduck 363 268 16.99
+Gyarados 393 348 15.82
+Jynx 333 288 18.55
+Kabutops 323 258 15.63
+Lapras 463 218 11.71
+Marowak 323 188 8.79
+Mewtwo 415 358 25.39
+Nidoking 365 268 16.99
+Nidoqueen 383 250 14.84
+Omastar 343 208 10.74
+Raticate 313 292 18.95
+Seadra 313 268 16.99
+Seaking 363 234 13.28
+Starmie 323 328 22.46
+Tauros 353 318 21.48
+Tentacruel 363 298 19.53
+Vaporeon 463 228 12.70
